@@ -508,6 +508,9 @@ libc_common_cflags += -DTARGET_USES_LOGD
 endif
 
 use_clang := false
+ifeq ($(strip $(USE_CLANG_QCOM)),true)
+use_clang := true
+endif
 
 # Try to catch typical 32-bit assumptions that break with 64-bit pointers.
 libc_common_cflags += \
@@ -1091,6 +1094,12 @@ LOCAL_SRC_FILES := \
 
 LOCAL_MODULE := libc_malloc_debug_leak
 LOCAL_CLANG := $(use_clang)
+
+#QCOM CLANG doesnt like this module
+ifeq ($(strip $(USE_CLANG_QCOM)),true)
+LOCAL_CLANG := false
+endif
+
 LOCAL_ADDITIONAL_DEPENDENCIES := $(libc_common_additional_dependencies)
 
 LOCAL_SHARED_LIBRARIES := libc libdl
@@ -1127,6 +1136,7 @@ LOCAL_SRC_FILES := \
 
 LOCAL_MODULE := libc_malloc_debug_qemu
 LOCAL_CLANG := $(use_clang)
+
 LOCAL_ADDITIONAL_DEPENDENCIES := $(libc_common_additional_dependencies)
 
 LOCAL_SHARED_LIBRARIES := libc libdl
@@ -1156,6 +1166,11 @@ LOCAL_SRC_FILES := $(libstdcxx_common_src_files)
 LOCAL_MODULE:= libstdc++
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 LOCAL_SYSTEM_SHARED_LIBRARIES := libc
+
+ifeq ($(strip $(USE_CLANG_QCOM)),true)
+LOCAL_CLANG := true
+endif
+
 include $(BUILD_SHARED_LIBRARY)
 
 # ========================================================
@@ -1168,6 +1183,11 @@ LOCAL_SRC_FILES := $(libstdcxx_common_src_files)
 LOCAL_MODULE:= libstdc++
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 LOCAL_SYSTEM_SHARED_LIBRARIES := libc
+
+ifeq ($(strip $(USE_CLANG_QCOM)),true)
+LOCAL_CLANG := true
+endif
+
 include $(BUILD_STATIC_LIBRARY)
 
 
